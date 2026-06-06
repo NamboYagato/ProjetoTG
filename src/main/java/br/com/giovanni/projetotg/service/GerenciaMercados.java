@@ -1,51 +1,49 @@
 package br.com.giovanni.projetotg.service;
 
 import br.com.giovanni.projetotg.model.Mercado;
-import br.com.giovanni.projetotg.model.Produto;
+import br.com.giovanni.projetotg.repository.MercadoRepository;
+import jakarta.persistence.EntityNotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class GerenciaMercados {
-    private List<Mercado> mercados;
+    private MercadoRepository mercadoRepository;
 
-    public GerenciaMercados() {
-        this.mercados = new ArrayList<>(List.of(
-                new Mercado("Shibata Supermercados - Caçapava", "Rod. João Amaral Gurgel, 980 - Res. Terras do Vale, Caçapava - SP, 12285-020"),
-                new Mercado("Extra Mercado", "R. Reg. Feijó, 148 - Vila Santos, Caçapava - SP, 12280-034")
-        ));
+    public GerenciaMercados(MercadoRepository mercadoRepository) {
+        this.mercadoRepository = mercadoRepository;
     }
 
-    public void getMercados() {
-        for (int i = 0; i < mercados.size(); i++) {
-            System.out.println(i+1 + " - " + mercados.get(i));
-        }
+    public List<Mercado> getMercados() {
+        return mercadoRepository.findAll();
     }
 
     public void novoMercado(Mercado mercado) {
-        this.mercados.add(mercado);
+        mercadoRepository.save(mercado);
     }
 
-    public List<Mercado> buscaMercado(String nomeMercado) {
-        List<Mercado> busca = this.mercados.stream()
-                .filter(m -> m.getNome().toLowerCase().contains(nomeMercado.toLowerCase()))
-                .collect(Collectors.toList());
-        return busca;
+    public void editarMercado(long id, String nome, String endereco) {
+        Mercado mercado;
+        Optional<Mercado> optionalMercado = mercadoRepository.findById(id);
+        if (optionalMercado.isPresent()) {
+            mercado = optionalMercado.get();
+            if (!nome.isBlank()) {
+                mercado.setNome(nome);
+            }
+            if (!endereco.isBlank()) {
+                mercado.setEndereco(endereco);
+            }
+            mercadoRepository.save(mercado);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public List<Produto> buscaProdutosPorMercado(String nomeProduto) {
-        List<Produto> produtoBuscado = mercados.stream()
-                .map(m -> m.getProdutos())
-                .flatMap(p -> p.stream()
-                        .filter(produto -> produto.getNome().toLowerCase().contains(nomeProduto.toLowerCase())))
-                .collect(Collectors.toList());
-        return produtoBuscado;
+    public void removerMercado(long id) {
+        mercadoRepository.deleteById(id);
     }
 
-    public void novoProduto(int indexMercado, String nomeProduto, double valorProduto) {
-        var mercadoSelecionado = mercados.get(indexMercado - 1);
-        mercadoSelecionado.postProduto(new Produto(nomeProduto, valorProduto, mercadoSelecionado));
-        System.out.println("Produto adicionado com sucesso!");
+    public Mercado buscaMercado(long id) {
+        return mercadoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Mercado não encontrado!"));
     }
 }

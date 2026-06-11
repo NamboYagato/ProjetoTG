@@ -1,11 +1,9 @@
 package br.com.giovanni.projetotg.model;
 
-import br.com.giovanni.projetotg.repository.MercadoRepository;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Entity
@@ -73,11 +71,7 @@ public class Mercado {
     }
 
     public boolean verificaIndex(int index) {
-        if (index > 0 && produtos.size() - index > 0 && produtos.size() > index) {
-            return true;
-        } else {
-            return false;
-        }
+        return index > 0 && produtos.size() - index > 0 && produtos.size() > index;
     }
 
     public void removerProduto(int index) {

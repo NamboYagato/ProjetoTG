@@ -7,13 +7,14 @@ import br.com.giovanni.projetotg.repository.MercadoRepository;
 import br.com.giovanni.projetotg.repository.ProdutoRepository;
 import br.com.giovanni.projetotg.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class GerenciaProdutos {
-    private ProdutoRepository produtoRepository;
-    private MercadoRepository mercadoRepository;
-    private UsuarioRepository usuarioRepository;
+    private final ProdutoRepository produtoRepository;
+    private final MercadoRepository mercadoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public GerenciaProdutos(ProdutoRepository produtoRepository, MercadoRepository mercadoRepository, UsuarioRepository usuarioRepository) {
         this.produtoRepository = produtoRepository;
@@ -25,11 +26,11 @@ public class GerenciaProdutos {
         return produtoRepository.findAll();
     }
 
-    public void novoProduto(Produto produto) {
-        produtoRepository.save(produto);
+    public Produto novoProduto(Produto produto) {
+        return produtoRepository.save(produto);
     }
 
-    public void editarProduto(long id, String nome, double valor) {
+    public Produto editarProduto(long id, String nome, double valor) {
         Produto produto = produtoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado!"));
         if (!nome.isBlank()) {
             produto.setNome(nome);
@@ -37,7 +38,7 @@ public class GerenciaProdutos {
         if (valor > 0) {
             produto.setValor(valor);
         }
-        produtoRepository.save(produto);
+        return produtoRepository.save(produto);
     }
 
     public void deletarProduto(long id) {

@@ -43,8 +43,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public UsuarioDto buscaUsuarioPorId(@PathVariable long id) {
-        UsuarioDto usuarioBuscado = gerenciaUsuarios.buscarUsuario(id);
+    public UsuarioDtoSummary buscaUsuarioPorId(@PathVariable long id) {
+        UsuarioDtoSummary usuarioBuscado = gerenciaUsuarios.buscarUsuario(id);
         return usuarioBuscado;
     }
 }

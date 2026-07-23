@@ -55,8 +55,8 @@ public class GerenciaUsuarios {
         usuarioRepository.deleteById(id);
     }
 
-    public UsuarioDto buscarUsuario(long id) {
+    public UsuarioDtoSummary buscarUsuario(long id) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
-        return new UsuarioDto(usuario.getNome(), usuario.getEmail(), usuario.getId());
+        return new UsuarioDtoSummary(usuario.getNome(), usuario.getId());
     }
 }

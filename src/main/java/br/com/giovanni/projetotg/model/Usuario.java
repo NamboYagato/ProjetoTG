@@ -2,6 +2,8 @@ package br.com.giovanni.projetotg.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Usuario {
     @Id
@@ -13,6 +15,8 @@ public class Usuario {
     private String email;
     @Column(nullable = false)
     private String password;
+    @OneToMany(mappedBy = "usuario")
+    private List<Produto> produtos;
 
     public Usuario() {
     }
@@ -55,4 +59,10 @@ public class Usuario {
     public String toString() {
         return "id: " + getId() + " " + getNome();
     }
+
+    @PreRemove
+    public void setUsuarioIdNullOnDelete() {
+        produtos.forEach(p -> p.setUsuario(null));
+    }
+
 }

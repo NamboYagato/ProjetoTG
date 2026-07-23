@@ -13,7 +13,7 @@ public class Mercado {
     private long id;
     private String nome;
     private String endereco;
-    @OneToMany(mappedBy = "mercado", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "mercado", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Produto> produtos;
 
     public Mercado() {

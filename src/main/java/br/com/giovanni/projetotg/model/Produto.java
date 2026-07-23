@@ -53,6 +53,10 @@ public class Produto {
         this.valor = valor;
     }
 
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
     @Override
     public String toString() {
         return "id: " + getId() + " " + getNome() + " (R$ " + getValor() + ") - Mercado: " + getMercado().getNome() + " - Usuário: " + getUsuario();

@@ -1,5 +1,7 @@
 package br.com.giovanni.projetotg.controller;
 
+import br.com.giovanni.projetotg.dto.UsuarioDto;
+import br.com.giovanni.projetotg.dto.UsuarioDtoSummary;
 import br.com.giovanni.projetotg.model.Usuario;
 import br.com.giovanni.projetotg.service.GerenciaUsuarios;
 import org.springframework.http.HttpStatus;
@@ -18,19 +20,19 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public List<Usuario> getUsuarios() {
-        return gerenciaUsuarios.getUsuarios();
+    public List<UsuarioDtoSummary> getUsuarios(@RequestParam(required = false, name = "name") String nome) {
+        return gerenciaUsuarios.getUsuarios(nome);
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> cadastraUsuario(@RequestBody Usuario usuario) {
-        Usuario usuarioCadastrado = gerenciaUsuarios.novoUsuario(usuario);
+    public ResponseEntity<UsuarioDto> cadastraUsuario(@RequestBody Usuario usuario) {
+        UsuarioDto usuarioCadastrado = gerenciaUsuarios.novoUsuario(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCadastrado);
     }
 
     @PatchMapping("/{id}")
-    public Usuario editarUsuario(@PathVariable long id, @RequestBody Usuario usuario) {
-        Usuario usuarioEditado = gerenciaUsuarios.editarUsuario(id, usuario.getNome(), usuario.getEmail(), usuario.getPassword());
+    public UsuarioDto editarUsuario(@PathVariable long id, @RequestBody Usuario usuario) {
+        UsuarioDto usuarioEditado = gerenciaUsuarios.editarUsuario(id, usuario.getNome(), usuario.getEmail(), usuario.getPassword());
         return usuarioEditado;
     }
 
@@ -41,8 +43,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public Usuario buscaUsuarioPorId(@PathVariable long id) {
-        Usuario usuarioBuscado = gerenciaUsuarios.buscarUsuario(id);
+    public UsuarioDto buscaUsuarioPorId(@PathVariable long id) {
+        UsuarioDto usuarioBuscado = gerenciaUsuarios.buscarUsuario(id);
         return usuarioBuscado;
     }
 }

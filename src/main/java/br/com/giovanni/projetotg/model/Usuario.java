@@ -1,5 +1,6 @@
 package br.com.giovanni.projetotg.model;
 
+import br.com.giovanni.projetotg.enums.Papeis;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public class Usuario {
     private String password;
     @OneToMany(mappedBy = "usuario")
     private List<Produto> produtos;
+    @Enumerated(EnumType.STRING)
+    private Papeis papel;
 
     public Usuario() {
     }
@@ -25,6 +28,7 @@ public class Usuario {
         this.nome = nome;
         this.email = email;
         this.password = password;
+        this.papel = Papeis.USER;
     }
 
     public long getId() {
@@ -53,6 +57,18 @@ public class Usuario {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Produto> getProdutos() {
+        return produtos;
+    }
+
+    public Papeis getPapel() {
+        return papel;
+    }
+
+    public void setPapel(Papeis papel) {
+        this.papel = papel;
     }
 
     @Override

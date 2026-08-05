@@ -46,10 +46,10 @@ public class GerenciaMercados {
 
     public MercadoDtoResponse editarMercado(long id, String nome, String endereco) {
         Mercado mercado = mercadoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Mercado não encontrado!"));
-            if (!nome.isBlank() || nome != null) {
+            if (nome != null && !nome.isBlank()) {
                 mercado.setNome(nome);
             }
-            if (!endereco.isBlank()) {
+            if (endereco != null && !endereco.isBlank()) {
                 mercado.setEndereco(endereco);
             }
             mercadoRepository.save(mercado);

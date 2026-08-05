@@ -53,7 +53,7 @@ public class GerenciaProdutos {
 
     public ProdutoDtoResponse editarProduto(String nome, double valor, long id) {
         Produto produto = produtoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado!"));
-        if (!nome.isBlank()) {
+        if (nome != null && !nome.isBlank()) {
             produto.setNome(nome);
         }
         if (valor > 0) {

@@ -8,9 +8,12 @@ import br.com.giovanni.projetotg.repository.MercadoRepository;
 import br.com.giovanni.projetotg.repository.ProdutoRepository;
 import br.com.giovanni.projetotg.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,7 +55,11 @@ public class GerenciaProdutos {
     }
 
     public ProdutoDtoResponse editarProduto(String nome, double valor, long id) {
+        String contextHolderEmail = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         Produto produto = produtoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado!"));
+        if (!produto.getUsuario().getEmail().equalsIgnoreCase(contextHolderEmail)) {
+            throw new AccessDeniedException("Você não tem permissão para editar este produto");
+        }
         if (nome != null && !nome.isBlank()) {
             produto.setNome(nome);
         }
@@ -66,6 +73,11 @@ public class GerenciaProdutos {
     }
 
     public void deletarProduto(long id) {
+        String contextHolderEmail = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
+        Produto produto = produtoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado!"));
+        if (!produto.getUsuario().getEmail().equalsIgnoreCase(contextHolderEmail)) {
+            throw new AccessDeniedException("Você não tem permissão para deletar este produto");
+        }
         produtoRepository.deleteById(id);
     }
 

@@ -3,6 +3,7 @@ package br.com.giovanni.projetotg.model;
 import br.com.giovanni.projetotg.enums.Papeis;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,12 +23,14 @@ public class Usuario {
     private Papeis papel;
 
     public Usuario() {
+        this.produtos = new ArrayList<>();
     }
 
     public Usuario(String nome, String email, String password) {
         this.nome = nome;
         this.email = email;
         this.password = password;
+        this.produtos = new ArrayList<>();
         this.papel = Papeis.USER;
     }
 

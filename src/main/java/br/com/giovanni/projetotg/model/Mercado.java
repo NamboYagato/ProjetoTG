@@ -17,6 +17,7 @@ public class Mercado {
     private List<Produto> produtos;
 
     public Mercado() {
+        this.produtos = new ArrayList<>();
     }
 
     public Mercado(String nome, String endereco) {

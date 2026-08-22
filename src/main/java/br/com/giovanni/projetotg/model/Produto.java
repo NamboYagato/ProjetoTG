@@ -2,6 +2,9 @@ package br.com.giovanni.projetotg.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class Produto {
     @Id
@@ -14,8 +17,11 @@ public class Produto {
     private Mercado mercado;
     @ManyToOne
     private Usuario usuario;
+    @OneToMany(mappedBy = "produto")
+    private List<Voto> votos;
 
     public Produto() {
+        this.votos = new ArrayList<>();
     }
 
     public Produto(String nome, double valor, Mercado mercado, Usuario usuario) {
@@ -23,6 +29,7 @@ public class Produto {
         this.valor = valor;
         this.mercado = mercado;
         this.usuario = usuario;
+        this.votos = new ArrayList<>();
     }
 
     public long getId() {
@@ -55,6 +62,10 @@ public class Produto {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public List<Voto> getVotos() {
+        return votos;
     }
 
     @Override

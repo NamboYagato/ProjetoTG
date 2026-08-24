@@ -19,6 +19,10 @@ public class Produto {
     private Usuario usuario;
     @OneToMany(mappedBy = "produto")
     private List<Voto> votos;
+    private long totalCorreto;
+    private long totalIncorreto;
+    @Version
+    private long version;
 
     public Produto() {
         this.votos = new ArrayList<>();
@@ -68,8 +72,15 @@ public class Produto {
         return votos;
     }
 
-    @Override
-    public String toString() {
-        return "id: " + getId() + " " + getNome() + " (R$ " + getValor() + ") - Mercado: " + getMercado().getNome() + " - Usuário: " + getUsuario();
+    public long getTotalCorreto() {
+        return totalCorreto;
+    }
+
+    public long getTotalIncorreto() {
+        return totalIncorreto;
+    }
+
+    public long getVersion() {
+        return version;
     }
 }

@@ -83,4 +83,12 @@ public class Produto {
     public long getVersion() {
         return version;
     }
+
+    public void setTotalCorreto(long totalCorreto) {
+        this.totalCorreto = totalCorreto;
+    }
+
+    public void setTotalIncorreto(long totalIncorreto) {
+        this.totalIncorreto = totalIncorreto;
+    }
 }

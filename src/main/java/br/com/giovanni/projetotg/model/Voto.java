@@ -40,4 +40,8 @@ public class Voto {
     public Votos getVotos() {
         return votos;
     }
+
+    public void setVotos(Votos votos) {
+        this.votos = votos;
+    }
 }

@@ -2,8 +2,11 @@ package br.com.giovanni.projetotg.controller;
 
 import br.com.giovanni.projetotg.dto.ProdutoDtoRequest;
 import br.com.giovanni.projetotg.dto.ProdutoDtoResponse;
+import br.com.giovanni.projetotg.dto.VotoDtoRequest;
+import br.com.giovanni.projetotg.dto.VotoDtoResponse;
 import br.com.giovanni.projetotg.model.Produto;
 import br.com.giovanni.projetotg.service.GerenciaProdutos;
+import br.com.giovanni.projetotg.service.VotoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +17,11 @@ import java.util.List;
 @RequestMapping("/produtos")
 public class ProdutoController {
     private final GerenciaProdutos gerenciaProdutos;
+    private final VotoService votoService;
 
-    public ProdutoController(GerenciaProdutos gerenciaProdutos) {
+    public ProdutoController(GerenciaProdutos gerenciaProdutos, VotoService votoService) {
         this.gerenciaProdutos = gerenciaProdutos;
+        this.votoService = votoService;
     }
 
     @GetMapping
@@ -58,5 +63,10 @@ public class ProdutoController {
     public List<ProdutoDtoResponse> produtosDoUsuario(@PathVariable long id) {
         List<ProdutoDtoResponse> produtos = gerenciaProdutos.buscarProdutosPorUsuario(id);
         return produtos;
+    }
+
+    @PostMapping("/{id}/votos")
+    public ResponseEntity<VotoDtoResponse> votarNoProduto(@PathVariable long id, @RequestBody VotoDtoRequest votoDtoRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(votoService.votar(id, votoDtoRequest));
     }
 }

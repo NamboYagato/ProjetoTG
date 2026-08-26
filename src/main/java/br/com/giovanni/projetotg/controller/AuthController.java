@@ -3,11 +3,12 @@ package br.com.giovanni.projetotg.controller;
 import br.com.giovanni.projetotg.dto.LoginDtoRequest;
 import br.com.giovanni.projetotg.dto.LoginDtoResponse;
 import br.com.giovanni.projetotg.service.AuthService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
@@ -20,12 +21,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginDtoResponse> login(@RequestBody LoginDtoRequest loginDtoRequest) {
-        String token;
-        try {
-            token = authService.authUser(loginDtoRequest.email(), loginDtoRequest.password());
-        } catch (BadCredentialsException | EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginDtoResponse(null, e.getMessage()));
-        }
+        String token = authService.authUser(loginDtoRequest.email(), loginDtoRequest.password());
         return ResponseEntity.status(HttpStatus.OK).body(new LoginDtoResponse(token, null));
     }
 }

@@ -1,8 +1,8 @@
 package br.com.giovanni.projetotg.controller;
 
-import br.com.giovanni.projetotg.dto.UsuarioDto;
+import br.com.giovanni.projetotg.dto.UsuarioDtoRequest;
+import br.com.giovanni.projetotg.dto.UsuarioDtoResponse;
 import br.com.giovanni.projetotg.dto.UsuarioDtoSummary;
-import br.com.giovanni.projetotg.model.Usuario;
 import br.com.giovanni.projetotg.service.GerenciaUsuarios;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,26 +25,24 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioDto> cadastraUsuario(@RequestBody Usuario usuario) {
-        UsuarioDto usuarioCadastrado = gerenciaUsuarios.novoUsuario(usuario);
+    public ResponseEntity<UsuarioDtoResponse> cadastraUsuario(@RequestBody UsuarioDtoRequest usuarioDtoRequest) {
+        UsuarioDtoResponse usuarioCadastrado = gerenciaUsuarios.novoUsuario(usuarioDtoRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCadastrado);
     }
 
-    @PatchMapping("/{id}")
-    public UsuarioDto editarUsuario(@PathVariable long id, @RequestBody Usuario usuario) {
-        UsuarioDto usuarioEditado = gerenciaUsuarios.editarUsuario(id, usuario.getNome(), usuario.getEmail(), usuario.getPassword());
-        return usuarioEditado;
+    @PatchMapping
+    public UsuarioDtoResponse editarUsuario(@RequestBody UsuarioDtoRequest usuarioDtoRequest) {
+        return gerenciaUsuarios.editarUsuario(usuarioDtoRequest.nome(), usuarioDtoRequest.email(), usuarioDtoRequest.senha());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteUsuario(@PathVariable long id) {
-        gerenciaUsuarios.deletarUsuario(id);
+    @DeleteMapping
+    public ResponseEntity deleteUsuario() {
+        gerenciaUsuarios.deletarUsuario();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/{id}")
     public UsuarioDtoSummary buscaUsuarioPorId(@PathVariable long id) {
-        UsuarioDtoSummary usuarioBuscado = gerenciaUsuarios.buscarUsuario(id);
-        return usuarioBuscado;
+        return gerenciaUsuarios.buscarUsuario(id);
     }
 }

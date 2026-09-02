@@ -1,6 +1,7 @@
 package br.com.giovanni.projetotg.exception;
 
 import br.com.giovanni.projetotg.dto.ErroDtoResponse;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,5 +33,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErroDtoResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
     }
 
-
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<ErroDtoResponse> handleEntityExistsException(EntityExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErroDtoResponse(e.getMessage(), HttpStatus.CONFLICT.value()));
+    }
 }

@@ -36,7 +36,7 @@ public class GerenciaProdutos {
         } else {
             produtos = produtoRepository.findAll();
         }
-        response = produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), p.getUsuario() == null ? new UsuarioDtoSummary("Usuário deletado", null) : new UsuarioDtoSummary(p.getUsuario().getNome(), p.getUsuario().getId()))).collect(Collectors.toList());
+        response = produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), p.getUsuario() == null ? new UsuarioDtoSummary("Usuário deletado") : new UsuarioDtoSummary(p.getUsuario().getNome()))).collect(Collectors.toList());
         return response;
     }
 
@@ -45,7 +45,7 @@ public class GerenciaProdutos {
         Usuario usuario = usuarioRepository.findByEmailIgnoreCase(contextHolderEmail).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
         Produto produto = new Produto(dtoRequest.nome(), dtoRequest.valor(), mercadoRepository.findById(dtoRequest.idMercado()).orElseThrow(() -> new EntityNotFoundException("Mercado não encontrado!")), usuario);
         produtoRepository.save(produto);
-        return new ProdutoDtoResponse(produto.getNome(), produto.getValor(), produto.getId(), new MercadoDtoSummary(produto.getMercado().getNome(), produto.getMercado().getId()), new UsuarioDtoSummary(produto.getUsuario().getNome(), produto.getUsuario().getId()));
+        return new ProdutoDtoResponse(produto.getNome(), produto.getValor(), produto.getId(), new MercadoDtoSummary(produto.getMercado().getNome(), produto.getMercado().getId()), new UsuarioDtoSummary(produto.getUsuario().getNome()));
     }
 
     public ProdutoDtoResponse editarProduto(String nome, double valor, long id) {
@@ -61,7 +61,7 @@ public class GerenciaProdutos {
             produto.setValor(valor);
         }
         produtoRepository.save(produto);
-        return new ProdutoDtoResponse(produto.getNome(), produto.getValor(), produto.getId(), new MercadoDtoSummary(produto.getMercado().getNome(), produto.getMercado().getId()), new UsuarioDtoSummary(produto.getUsuario().getNome(), produto.getUsuario().getId()));
+        return new ProdutoDtoResponse(produto.getNome(), produto.getValor(), produto.getId(), new MercadoDtoSummary(produto.getMercado().getNome(), produto.getMercado().getId()), new UsuarioDtoSummary(produto.getUsuario().getNome()));
     }
 
     public void deletarProduto(long id) {
@@ -75,18 +75,18 @@ public class GerenciaProdutos {
 
     public ProdutoDtoResponse buscarProduto(long id) {
         Produto p = produtoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado!"));
-        return new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), new UsuarioDtoSummary(p.getUsuario().getNome(), p.getUsuario().getId()));
+        return new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), new UsuarioDtoSummary(p.getUsuario().getNome()));
     }
 
     public List<ProdutoDtoResponse> buscarProdutosPorMercado(long id) {
         Mercado mercado = mercadoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Mercado não encontrado!"));
         List<Produto> produtos = produtoRepository.findByMercado(mercado);
-        return produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), p.getUsuario() == null ? new UsuarioDtoSummary("Usuário deletado", null) : new UsuarioDtoSummary(p.getUsuario().getNome(), p.getUsuario().getId()))).collect(Collectors.toList());
+        return produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), p.getUsuario() == null ? new UsuarioDtoSummary("Usuário deletado") : new UsuarioDtoSummary(p.getUsuario().getNome()))).collect(Collectors.toList());
     }
 
     public List<ProdutoDtoResponse> buscarProdutosPorUsuario(long id) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
         List<Produto> produtos = produtoRepository.findByUsuario(usuario);
-        return produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), new UsuarioDtoSummary(p.getUsuario().getNome(), p.getUsuario().getId()))).collect(Collectors.toList());
+        return produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), new UsuarioDtoSummary(p.getUsuario().getNome()))).collect(Collectors.toList());
     }
 }

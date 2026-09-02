@@ -1,8 +1,7 @@
 package br.com.giovanni.projetotg.dto;
 
-public record UsuarioDto(
+public record UsuarioDtoResponse(
         String nome,
-        String email,
-        Long id
+        String email
 ) {
 }

@@ -1,18 +1,33 @@
 package br.com.giovanni.projetotg.model;
 
+import br.com.giovanni.projetotg.enums.Cidades;
+import br.com.giovanni.projetotg.enums.Estados;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 public class Mercado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(nullable = false)
     private String nome;
-    private String endereco;
+    @Column(nullable = false)
+    private String rua;
+    @Column(nullable = false)
+    private Integer numero;
+    @Column(nullable = false)
+    private String bairro;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Cidades cidade;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Estados estado;
+    @Column(nullable = false)
+    private String cep;
     @OneToMany(mappedBy = "mercado", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Produto> produtos;
 
@@ -20,9 +35,14 @@ public class Mercado {
         this.produtos = new ArrayList<>();
     }
 
-    public Mercado(String nome, String endereco) {
+    public Mercado(String nome, String rua, Integer numero, String bairro, Cidades cidade, Estados estado, String cep) {
         this.nome = nome;
-        this.endereco = endereco;
+        this.rua = rua;
+        this.numero = numero;
+        this.bairro = bairro;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.cep = cep;
         this.produtos = new ArrayList<>();
     }
 
@@ -34,8 +54,28 @@ public class Mercado {
         return nome;
     }
 
-    public String getEndereco() {
-        return endereco;
+    public String getRua() {
+        return rua;
+    }
+
+    public Integer getNumero() {
+        return numero;
+    }
+
+    public String getBairro() {
+        return bairro;
+    }
+
+    public Cidades getCidade() {
+        return cidade;
+    }
+
+    public Estados getEstado() {
+        return estado;
+    }
+
+    public String getCep() {
+        return cep;
     }
 
     public List<Produto> getProdutos() {
@@ -46,36 +86,27 @@ public class Mercado {
         this.nome = nome;
     }
 
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
+    public void setRua(String rua) {
+        this.rua = rua;
     }
 
-    @Override
-    public String toString() {
-        return "id: " + getId() + " " + getNome() + ", " + getEndereco() + ", " + getProdutos();
+    public void setNumero(Integer numero) {
+        this.numero = numero;
     }
 
-    public void postProduto(Produto produto) {
-        produtos.add(produto);
+    public void setBairro(String bairro) {
+        this.bairro = bairro;
     }
 
-    public List<Produto> buscaProduto(String nome) {
-        List<Produto> buscaProduto = produtos.stream()
-                .filter(p -> p.getNome().toLowerCase().contains(nome.toLowerCase()))
-                .collect(Collectors.toList());
-        return buscaProduto;
+    public void setCidade(Cidades cidade) {
+        this.cidade = cidade;
     }
 
-    public Produto getProduto(int index) {
-        Produto produto = produtos.get(index - 1);
-        return produto;
+    public void setEstado(Estados estado) {
+        this.estado = estado;
     }
 
-    public boolean verificaIndex(int index) {
-        return index > 0 && produtos.size() - index > 0 && produtos.size() > index;
-    }
-
-    public void removerProduto(int index) {
-        produtos.remove(index-1);
+    public void setCep(String cep) {
+        this.cep = cep;
     }
 }

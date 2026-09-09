@@ -1,7 +1,7 @@
 package br.com.giovanni.projetotg.controller;
 
+import br.com.giovanni.projetotg.dto.MercadoDtoRequest;
 import br.com.giovanni.projetotg.dto.MercadoDtoResponse;
-import br.com.giovanni.projetotg.model.Mercado;
 import br.com.giovanni.projetotg.service.GerenciaMercados;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,15 +24,14 @@ public class MercadoController {
     }
 
     @PostMapping
-    public ResponseEntity<MercadoDtoResponse> novoMercado(@RequestBody Mercado mercado) {
-        MercadoDtoResponse mercadoCadastrado = gerenciaMercados.novoMercado(mercado);
-        return ResponseEntity.status(HttpStatus.CREATED).body(mercadoCadastrado); // Se for dar deploy no projeto precisa arrumar a segurança das rotas e provavelmente de mais coisas do projeto.
+    public ResponseEntity<MercadoDtoResponse> novoMercado(@RequestBody MercadoDtoRequest mercadoDtoRequest) {
+        MercadoDtoResponse mercadoCadastrado = gerenciaMercados.novoMercado(mercadoDtoRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mercadoCadastrado);
     }
 
     @PatchMapping("/{id}")
-    public MercadoDtoResponse editarMercado(@PathVariable long id, @RequestBody Mercado mercado) {
-        MercadoDtoResponse mercadoEditado = gerenciaMercados.editarMercado(id, mercado.getNome(), mercado.getEndereco());
-        return mercadoEditado;
+    public MercadoDtoResponse editarMercado(@PathVariable long id, @RequestBody MercadoDtoRequest mercadoDtoRequest) {
+        return gerenciaMercados.editarMercado(id, mercadoDtoRequest);
     }
 
     @DeleteMapping("/{id}")

@@ -54,7 +54,7 @@ public class GerenciaUsuarios {
         Usuario usuario = usuarioRepository.findByEmailIgnoreCase(contextHolderEmail).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
         Optional<Usuario> usuarioJaExiste = usuarioRepository.findByEmailIgnoreCase(email);
         if (usuarioJaExiste.isPresent()) {
-            if (!usuarioJaExiste.get().getEmail().equals(contextHolderEmail)) {
+            if (!usuarioJaExiste.get().getEmail().equalsIgnoreCase(contextHolderEmail)) {
                 throw new EntityExistsException("Esse email já está em uso!");
             }
         }

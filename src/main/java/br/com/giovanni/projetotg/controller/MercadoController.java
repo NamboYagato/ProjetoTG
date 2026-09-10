@@ -2,6 +2,7 @@ package br.com.giovanni.projetotg.controller;
 
 import br.com.giovanni.projetotg.dto.MercadoDtoRequest;
 import br.com.giovanni.projetotg.dto.MercadoDtoResponse;
+import br.com.giovanni.projetotg.dto.MercadoDtoSearchFilter;
 import br.com.giovanni.projetotg.service.GerenciaMercados;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,8 @@ public class MercadoController {
     }
 
     @GetMapping
-    public List<MercadoDtoResponse> getMercados(@RequestParam(required = false, name = "name") String nome) {
-        return gerenciaMercados.getMercados(nome);
+    public List<MercadoDtoResponse> getMercados(MercadoDtoSearchFilter mercadoDtoSearchFilter) {
+        return gerenciaMercados.getMercados(mercadoDtoSearchFilter.nome(), mercadoDtoSearchFilter.cidade(), mercadoDtoSearchFilter.estado());
     }
 
     @PostMapping

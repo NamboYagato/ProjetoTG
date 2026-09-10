@@ -3,10 +3,14 @@ package br.com.giovanni.projetotg.service;
 import br.com.giovanni.projetotg.dto.MercadoDtoRequest;
 import br.com.giovanni.projetotg.dto.MercadoDtoResponse;
 import br.com.giovanni.projetotg.dto.ProdutoDtoSummary;
+import br.com.giovanni.projetotg.enums.Cidades;
+import br.com.giovanni.projetotg.enums.Estados;
 import br.com.giovanni.projetotg.model.Mercado;
 import br.com.giovanni.projetotg.repository.MercadoRepository;
+import br.com.giovanni.projetotg.specification.MercadoSpecification;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.jpa.domain.PredicateSpecification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,24 +25,13 @@ public class GerenciaMercados {
         this.mercadoRepository = mercadoRepository;
     }
 
-    public List<MercadoDtoResponse> getMercados(String nome) {
+    public List<MercadoDtoResponse> getMercados(String nome, Cidades cidade, Estados estado) {
         List<MercadoDtoResponse> response;
-        List<Mercado> mercados;
-        if (nome != null) {
-            mercados = mercadoRepository.findByNomeContainingIgnoreCase(nome);
-        } else {
-            mercados = mercadoRepository.findAll();
-        }
-        response = mercados.stream()
-                .map(mercado -> new MercadoDtoResponse(mercado.getNome(), mercado.getRua(), mercado.getNumero(), mercado.getBairro(), mercado.getCidade(), mercado.getEstado(), mercado.getCep(), mercado.getId(),
-                        mercado.getProdutos().stream()
-                                .map(p -> new ProdutoDtoSummary(p.getNome(), p.getValor(), p.getId()))
-                                .collect(Collectors.toList())
-                ))
-                .collect(Collectors.toList());
+        PredicateSpecification<Mercado> predicateSpecification = MercadoSpecification.onlyNome(nome).and(MercadoSpecification.onlyCidade(cidade)).and(MercadoSpecification.onlyEstado(estado));
+        List<Mercado> mercados = mercadoRepository.findAll(predicateSpecification);
+        response = mercados.stream().map(mercado -> new MercadoDtoResponse(mercado.getNome(), mercado.getRua(), mercado.getNumero(), mercado.getBairro(), mercado.getCidade(), mercado.getEstado(), mercado.getCep(), mercado.getId(), mercado.getProdutos().stream().map(p -> new ProdutoDtoSummary(p.getNome(), p.getValor(), p.getId())).collect(Collectors.toList()))).collect(Collectors.toList());
         return response;
     }
-
 
     public MercadoDtoResponse novoMercado(MercadoDtoRequest mercadoDtoRequest) {
         Optional<Mercado> mercadoOptional = mercadoRepository.findByCepAndNumero(mercadoDtoRequest.cep(), mercadoDtoRequest.numero());

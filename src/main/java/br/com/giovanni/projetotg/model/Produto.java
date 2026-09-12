@@ -68,20 +68,12 @@ public class Produto {
         this.usuario = usuario;
     }
 
-    public List<Voto> getVotos() {
-        return votos;
-    }
-
     public long getTotalCorreto() {
         return totalCorreto;
     }
 
     public long getTotalIncorreto() {
         return totalIncorreto;
-    }
-
-    public long getVersion() {
-        return version;
     }
 
     public void setTotalCorreto(long totalCorreto) {

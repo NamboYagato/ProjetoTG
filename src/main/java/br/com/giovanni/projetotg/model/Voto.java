@@ -2,6 +2,8 @@ package br.com.giovanni.projetotg.model;
 
 import br.com.giovanni.projetotg.enums.Votos;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"usuario_id", "produto_id"}))
@@ -10,8 +12,10 @@ public class Voto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Usuario usuario;
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Produto produto;
     @Enumerated(EnumType.STRING)
     private Votos votos;

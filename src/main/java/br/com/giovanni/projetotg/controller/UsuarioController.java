@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -42,7 +43,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public UsuarioDtoSummary buscaUsuarioPorId(@PathVariable long id) {
+    public UsuarioDtoSummary buscaUsuarioPorId(@PathVariable UUID id) {
         return gerenciaUsuarios.buscarUsuario(id);
     }
 }

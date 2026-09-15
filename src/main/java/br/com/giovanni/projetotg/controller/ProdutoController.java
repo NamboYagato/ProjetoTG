@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/produtos")
@@ -60,7 +61,7 @@ public class ProdutoController {
     }
 
     @GetMapping("/usuarios/{id}")
-    public List<ProdutoDtoResponse> produtosDoUsuario(@PathVariable long id) {
+    public List<ProdutoDtoResponse> produtosDoUsuario(@PathVariable UUID id) {
         List<ProdutoDtoResponse> produtos = gerenciaProdutos.buscarProdutosPorUsuario(id);
         return produtos;
     }

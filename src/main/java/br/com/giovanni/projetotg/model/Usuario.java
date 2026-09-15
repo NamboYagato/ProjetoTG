@@ -5,12 +5,13 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 public class Usuario {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     @Column(nullable = false)
     private String nome;
     @Column(unique = true, nullable = false)
@@ -34,7 +35,7 @@ public class Usuario {
         this.papel = Papeis.USER;
     }
 
-    public long getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -68,15 +69,6 @@ public class Usuario {
 
     public Papeis getPapel() {
         return papel;
-    }
-
-    public void setPapel(Papeis papel) {
-        this.papel = papel;
-    }
-
-    @Override
-    public String toString() {
-        return "id: " + getId() + " " + getNome();
     }
 
     @PreRemove

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,15 +51,15 @@ public class GerenciaUsuarios {
     }
 
     public UsuarioDtoResponse editarUsuario(String nome, String email, String password) {
-        String contextHolderEmail = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
-        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(contextHolderEmail).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
+        UUID usuarioId = UUID.fromString(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName());
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
         Optional<Usuario> usuarioJaExiste = usuarioRepository.findByEmailIgnoreCase(email);
         if (usuarioJaExiste.isPresent()) {
-            if (!usuarioJaExiste.get().getEmail().equalsIgnoreCase(contextHolderEmail)) {
+            if (!usuarioJaExiste.get().getEmail().equalsIgnoreCase(usuario.getEmail())) {
                 throw new EntityExistsException("Esse email já está em uso!");
             }
         }
-        if (usuarioJaExiste.isEmpty() || usuarioJaExiste.get().getEmail().equalsIgnoreCase(contextHolderEmail)) {
+        if (usuarioJaExiste.isEmpty() || usuarioJaExiste.get().getEmail().equalsIgnoreCase(usuario.getEmail())) {
             if (nome != null && !nome.isBlank()) {
                 usuario.setNome(nome);
             }
@@ -74,12 +75,12 @@ public class GerenciaUsuarios {
     }
 
     public void deletarUsuario() {
-        String contextHolderEmail = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
-        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(contextHolderEmail).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
+        UUID usuarioId = UUID.fromString(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName());
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
         usuarioRepository.deleteById(usuario.getId());
     }
 
-    public UsuarioDtoSummary buscarUsuario(long id) {
+    public UsuarioDtoSummary buscarUsuario(UUID id) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
         return new UsuarioDtoSummary(usuario.getNome());
     }

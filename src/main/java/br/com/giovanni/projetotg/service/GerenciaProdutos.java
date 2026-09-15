@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,18 +42,19 @@ public class GerenciaProdutos {
     }
 
     public ProdutoDtoResponse novoProduto(ProdutoDtoRequest dtoRequest) {
-        String contextHolderEmail = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
-        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(contextHolderEmail).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        UUID usuarioId = UUID.fromString(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName());
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
         Produto produto = new Produto(dtoRequest.nome(), dtoRequest.valor(), mercadoRepository.findById(dtoRequest.idMercado()).orElseThrow(() -> new EntityNotFoundException("Mercado não encontrado!")), usuario);
         produtoRepository.save(produto);
         return new ProdutoDtoResponse(produto.getNome(), produto.getValor(), produto.getId(), new MercadoDtoSummary(produto.getMercado().getNome(), produto.getMercado().getId()), new UsuarioDtoSummary(produto.getUsuario().getNome()));
     }
 
     public ProdutoDtoResponse editarProduto(String nome, double valor, long id) {
-        String contextHolderEmail = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
+        UUID usuarioId = UUID.fromString(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName());
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
         Produto produto = produtoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado!"));
-        if (!produto.getUsuario().getEmail().equalsIgnoreCase(contextHolderEmail)) {
-            throw new AccessDeniedException("Você não tem permissão para editar este produto");
+        if (!produto.getUsuario().getId().equals(usuario.getId())) {
+            throw new AccessDeniedException("Você não tem permissão para editar este produto!");
         }
         if (nome != null && !nome.isBlank()) {
             produto.setNome(nome);
@@ -65,9 +67,10 @@ public class GerenciaProdutos {
     }
 
     public void deletarProduto(long id) {
-        String contextHolderEmail = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
+        UUID usuarioId = UUID.fromString(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName());
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
         Produto produto = produtoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado!"));
-        if (!produto.getUsuario().getEmail().equalsIgnoreCase(contextHolderEmail)) {
+        if (!produto.getUsuario().getId().equals(usuario.getId())) {
             throw new AccessDeniedException("Você não tem permissão para deletar este produto");
         }
         produtoRepository.deleteById(id);
@@ -84,7 +87,7 @@ public class GerenciaProdutos {
         return produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), p.getUsuario() == null ? new UsuarioDtoSummary("Usuário deletado") : new UsuarioDtoSummary(p.getUsuario().getNome()))).collect(Collectors.toList());
     }
 
-    public List<ProdutoDtoResponse> buscarProdutosPorUsuario(long id) {
+    public List<ProdutoDtoResponse> buscarProdutosPorUsuario(UUID id) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
         List<Produto> produtos = produtoRepository.findByUsuario(usuario);
         return produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), new UsuarioDtoSummary(p.getUsuario().getNome()))).collect(Collectors.toList());

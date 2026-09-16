@@ -23,7 +23,7 @@ public class JwtService {
 
     public String tokenGenerator(Usuario usuario) {
         return Jwts.builder()
-                .subject(usuario.getEmail())
+                .subject(usuario.getId().toString())
                 .claim("role", usuario.getPapel().name())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))

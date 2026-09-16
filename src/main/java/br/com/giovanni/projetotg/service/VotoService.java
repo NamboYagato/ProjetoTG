@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class VotoService {
@@ -30,19 +31,18 @@ public class VotoService {
     }
 
     public VotoDtoResponse votar(long produtoId, VotoDtoRequest votoDtoRequest) {
-        String contextHolderEmail = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
-        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(contextHolderEmail).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
-        long usuarioId = usuario.getId();
+        UUID usuarioId = UUID.fromString(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName());
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
         Produto produto = produtoRepository.findById(produtoId).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado"));
 
-        if (produto.getUsuario().getId() == usuarioId) {
+        if (produto.getUsuario().getId().equals(usuario.getId())) {
             throw new AccessDeniedException("Dono do produto não pode votar");
         }
 
         if (votoDtoRequest.votos() == null) {
             throw new IllegalArgumentException("Voto não pode ser nulo!");
         }
-        Optional<Voto> jaVotou = votoRepository.findByUsuarioIdAndProdutoId(usuarioId, produtoId);
+        Optional<Voto> jaVotou = votoRepository.findByUsuarioIdAndProdutoId(usuario.getId(), produtoId);
 
         if (jaVotou.isEmpty()) {
             Voto novoVoto;

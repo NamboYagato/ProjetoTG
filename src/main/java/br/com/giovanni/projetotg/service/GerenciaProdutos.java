@@ -1,6 +1,8 @@
 package br.com.giovanni.projetotg.service;
 
 import br.com.giovanni.projetotg.dto.*;
+import br.com.giovanni.projetotg.enums.Papeis;
+import br.com.giovanni.projetotg.exception.UserDeletedException;
 import br.com.giovanni.projetotg.model.Mercado;
 import br.com.giovanni.projetotg.model.Produto;
 import br.com.giovanni.projetotg.model.Usuario;
@@ -53,6 +55,9 @@ public class GerenciaProdutos {
         UUID usuarioId = UUID.fromString(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName());
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
         Produto produto = produtoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado!"));
+        if (produto.getUsuario() == null) {
+            throw new UserDeletedException("Usuário dono do produto deletado. Não é permitido editar produto sem dono");
+        }
         if (!produto.getUsuario().getId().equals(usuario.getId())) {
             throw new AccessDeniedException("Você não tem permissão para editar este produto!");
         }
@@ -70,7 +75,10 @@ public class GerenciaProdutos {
         UUID usuarioId = UUID.fromString(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName());
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
         Produto produto = produtoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado!"));
-        if (!produto.getUsuario().getId().equals(usuario.getId())) {
+        if (produto.getUsuario() == null && !usuario.getPapel().equals(Papeis.ADMIN)) {
+            throw new UserDeletedException("Usuário dono do produto deletado. Você não tem permissão para deletar este produto");
+        }
+        if (!usuario.getPapel().equals(Papeis.ADMIN) && !produto.getUsuario().getId().equals(usuario.getId())) {
             throw new AccessDeniedException("Você não tem permissão para deletar este produto");
         }
         produtoRepository.deleteById(id);

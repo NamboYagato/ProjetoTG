@@ -3,6 +3,7 @@ package br.com.giovanni.projetotg.service;
 import br.com.giovanni.projetotg.dto.VotoDtoRequest;
 import br.com.giovanni.projetotg.dto.VotoDtoResponse;
 import br.com.giovanni.projetotg.enums.Votos;
+import br.com.giovanni.projetotg.exception.UserDeletedException;
 import br.com.giovanni.projetotg.model.Produto;
 import br.com.giovanni.projetotg.model.Usuario;
 import br.com.giovanni.projetotg.model.Voto;
@@ -34,6 +35,9 @@ public class VotoService {
         UUID usuarioId = UUID.fromString(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName());
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
         Produto produto = produtoRepository.findById(produtoId).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado"));
+        if (produto.getUsuario() == null) {
+            throw new UserDeletedException("Usuário dono do produto deletado. Não é permitido votar em produto sem dono");
+        }
 
         if (produto.getUsuario().getId().equals(usuario.getId())) {
             throw new AccessDeniedException("Dono do produto não pode votar");

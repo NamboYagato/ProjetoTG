@@ -37,4 +37,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErroDtoResponse> handleEntityExistsException(EntityExistsException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErroDtoResponse(e.getMessage(), HttpStatus.CONFLICT.value()));
     }
+
+    @ExceptionHandler(UserDeletedException.class)
+    public ResponseEntity<ErroDtoResponse> handleUserDeletedException(UserDeletedException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErroDtoResponse(e.getMessage(), HttpStatus.FORBIDDEN.value()));
+    }
 }

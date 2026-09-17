@@ -1,8 +1,8 @@
 package br.com.giovanni.projetotg.dto;
 
-public record ProdutoDtoRequest(
+public record NovoProdutoDtoRequest(
         String nome,
-        double valor,
+        Double valor,
         long idMercado
 ) {
 }

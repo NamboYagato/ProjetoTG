@@ -2,9 +2,11 @@ package br.com.giovanni.projetotg.dto;
 
 public record ProdutoDtoResponse(
         String nome,
-        double valor,
+        Double valor,
         long id,
         MercadoDtoSummary mercado,
-        UsuarioDtoSummary usuario
+        UsuarioDtoSummary usuario,
+        long totalCorreto,
+        long totalIncorreto
 ) {
 }

@@ -37,33 +37,33 @@ public class GerenciaProdutos {
         } else {
             produtos = produtoRepository.findAll();
         }
-        response = produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), p.getUsuario() == null ? new UsuarioDtoSummary("Usuário deletado") : new UsuarioDtoSummary(p.getUsuario().getNome()))).collect(Collectors.toList());
+        response = produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), p.getUsuario() == null ? new UsuarioDtoSummary("Usuário deletado") : new UsuarioDtoSummary(p.getUsuario().getNome()), p.getTotalCorreto(), p.getTotalIncorreto())).collect(Collectors.toList());
         return response;
     }
 
-    public ProdutoDtoResponse novoProduto(ProdutoDtoRequest dtoRequest) {
+    public ProdutoDtoResponse novoProduto(NovoProdutoDtoRequest dtoRequest) {
         UUID usuarioId = UUID.fromString(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName());
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
         Produto produto = new Produto(dtoRequest.nome(), dtoRequest.valor(), mercadoRepository.findById(dtoRequest.idMercado()).orElseThrow(() -> new EntityNotFoundException("Mercado não encontrado!")), usuario);
         produtoRepository.save(produto);
-        return new ProdutoDtoResponse(produto.getNome(), produto.getValor(), produto.getId(), new MercadoDtoSummary(produto.getMercado().getNome(), produto.getMercado().getId()), new UsuarioDtoSummary(produto.getUsuario().getNome()));
+        return new ProdutoDtoResponse(produto.getNome(), produto.getValor(), produto.getId(), new MercadoDtoSummary(produto.getMercado().getNome(), produto.getMercado().getId()), new UsuarioDtoSummary(produto.getUsuario().getNome()), produto.getTotalCorreto(), produto.getTotalIncorreto());
     }
 
-    public ProdutoDtoResponse editarProduto(String nome, double valor, long id) {
+    public ProdutoDtoResponse editarProduto(EditarProdutoDtoRequest dtoRequest, long id) {
         UUID usuarioId = UUID.fromString(Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName());
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
         Produto produto = produtoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado!"));
         if (!produto.getUsuario().getId().equals(usuario.getId())) {
             throw new AccessDeniedException("Você não tem permissão para editar este produto!");
         }
-        if (nome != null && !nome.isBlank()) {
-            produto.setNome(nome);
+        if (dtoRequest.nome() != null && !dtoRequest.nome().isBlank()) {
+            produto.setNome(dtoRequest.nome());
         }
-        if (valor > 0) {
-            produto.setValor(valor);
+        if (dtoRequest.valor() != null && dtoRequest.valor() > 0) {
+            produto.setValor(dtoRequest.valor());
         }
         produtoRepository.save(produto);
-        return new ProdutoDtoResponse(produto.getNome(), produto.getValor(), produto.getId(), new MercadoDtoSummary(produto.getMercado().getNome(), produto.getMercado().getId()), new UsuarioDtoSummary(produto.getUsuario().getNome()));
+        return new ProdutoDtoResponse(produto.getNome(), produto.getValor(), produto.getId(), new MercadoDtoSummary(produto.getMercado().getNome(), produto.getMercado().getId()), new UsuarioDtoSummary(produto.getUsuario().getNome()), produto.getTotalCorreto(), produto.getTotalIncorreto());
     }
 
     public void deletarProduto(long id) {
@@ -78,18 +78,18 @@ public class GerenciaProdutos {
 
     public ProdutoDtoResponse buscarProduto(long id) {
         Produto p = produtoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado!"));
-        return new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), new UsuarioDtoSummary(p.getUsuario().getNome()));
+        return new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), new UsuarioDtoSummary(p.getUsuario().getNome()), p.getTotalCorreto(), p.getTotalIncorreto());
     }
 
     public List<ProdutoDtoResponse> buscarProdutosPorMercado(long id) {
         Mercado mercado = mercadoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Mercado não encontrado!"));
         List<Produto> produtos = produtoRepository.findByMercado(mercado);
-        return produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), p.getUsuario() == null ? new UsuarioDtoSummary("Usuário deletado") : new UsuarioDtoSummary(p.getUsuario().getNome()))).collect(Collectors.toList());
+        return produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), p.getUsuario() == null ? new UsuarioDtoSummary("Usuário deletado") : new UsuarioDtoSummary(p.getUsuario().getNome()), p.getTotalCorreto(), p.getTotalIncorreto())).collect(Collectors.toList());
     }
 
     public List<ProdutoDtoResponse> buscarProdutosPorUsuario(UUID id) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado!"));
         List<Produto> produtos = produtoRepository.findByUsuario(usuario);
-        return produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), new UsuarioDtoSummary(p.getUsuario().getNome()))).collect(Collectors.toList());
+        return produtos.stream().map(p -> new ProdutoDtoResponse(p.getNome(), p.getValor(), p.getId(), new MercadoDtoSummary(p.getMercado().getNome(), p.getMercado().getId()), new UsuarioDtoSummary(p.getUsuario().getNome()), p.getTotalCorreto(), p.getTotalIncorreto())).collect(Collectors.toList());
     }
 }

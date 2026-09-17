@@ -1,9 +1,6 @@
 package br.com.giovanni.projetotg.controller;
 
-import br.com.giovanni.projetotg.dto.ProdutoDtoRequest;
-import br.com.giovanni.projetotg.dto.ProdutoDtoResponse;
-import br.com.giovanni.projetotg.dto.VotoDtoRequest;
-import br.com.giovanni.projetotg.dto.VotoDtoResponse;
+import br.com.giovanni.projetotg.dto.*;
 import br.com.giovanni.projetotg.model.Produto;
 import br.com.giovanni.projetotg.service.GerenciaProdutos;
 import br.com.giovanni.projetotg.service.VotoService;
@@ -31,14 +28,14 @@ public class ProdutoController {
     }
 
     @PostMapping
-    public ResponseEntity<ProdutoDtoResponse> novoProduto(@RequestBody ProdutoDtoRequest dtoRequest) {
+    public ResponseEntity<ProdutoDtoResponse> novoProduto(@RequestBody NovoProdutoDtoRequest dtoRequest) {
         ProdutoDtoResponse novoProduto = gerenciaProdutos.novoProduto(dtoRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);
     }
 
     @PatchMapping("/{id}")
-    public ProdutoDtoResponse editarProduto(@PathVariable long id, @RequestBody Produto produto) {
-        ProdutoDtoResponse produtoEditado = gerenciaProdutos.editarProduto(produto.getNome(), produto.getValor(), id);
+    public ProdutoDtoResponse editarProduto(@PathVariable long id, @RequestBody EditarProdutoDtoRequest dtoRequest) {
+        ProdutoDtoResponse produtoEditado = gerenciaProdutos.editarProduto(dtoRequest, id);
         return produtoEditado;
     }
 

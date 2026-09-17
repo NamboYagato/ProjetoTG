@@ -11,7 +11,7 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String nome;
-    private double valor;
+    private Double valor;
     @ManyToOne
     @JoinColumn(nullable = false)
     private Mercado mercado;
@@ -28,7 +28,7 @@ public class Produto {
         this.votos = new ArrayList<>();
     }
 
-    public Produto(String nome, double valor, Mercado mercado, Usuario usuario) {
+    public Produto(String nome, Double valor, Mercado mercado, Usuario usuario) {
         this.nome = nome;
         this.valor = valor;
         this.mercado = mercado;
@@ -44,7 +44,7 @@ public class Produto {
         return nome;
     }
 
-    public double getValor() {
+    public Double getValor() {
         return valor;
     }
 
@@ -60,7 +60,7 @@ public class Produto {
         this.nome = nome;
     }
 
-    public void setValor(double valor) {
+    public void setValor(Double valor) {
         this.valor = valor;
     }
 
